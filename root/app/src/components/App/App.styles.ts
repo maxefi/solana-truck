@@ -1,8 +1,6 @@
 import styled, {
   createGlobalStyle,
-  css,
   DefaultTheme,
-  FlattenSimpleInterpolation,
   ThemeProps,
 } from 'styled-components';
 
@@ -24,10 +22,8 @@ export const GlobalStyle = createGlobalStyle<ThemeProps<DefaultTheme>>`
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
       sans-serif;
     overflow-x: hidden;
-    ${({ theme }: ThemeProps<DefaultTheme>): FlattenSimpleInterpolation => css`
-      background: ${theme.palette.gray['50']};
-      color: ${theme.palette.gray['900']};
-    `}
+    background: white;
+    color: black;
     speak: none;
     font-style: normal;
     font-weight: normal;

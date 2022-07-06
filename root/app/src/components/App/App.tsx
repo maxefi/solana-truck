@@ -1,39 +1,40 @@
-import React, { memo, ReactElement, useState, Fragment } from 'react';
-import { Connection, PublicKey, ConfirmOptions } from '@solana/web3.js';
+import { ReactElement, useState, Fragment, useEffect } from 'react';
+import { Connection, PublicKey } from '@solana/web3.js';
 import {
-  Program, AnchorProvider, web3, Idl,
+  Program, AnchorProvider, Idl,
 } from '@project-serum/anchor';
+import { SystemProgram, Keypair } from '@solana/web3.js';
 import { Wallet } from '@project-serum/anchor/src/provider';
-import idl from './idl.json';
+import idl from '../../idl.json';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { AppStyled, AppWalletButtonWrapper } from './App.styles';
-import { localNetwork } from './App.constants';
+import { devNetwork } from '../../constants';
 import { Account } from './App.interface';
+import { opts } from './App.constants';
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 
-const { SystemProgram, Keypair } = web3;
-/*
- * Create an acount
- * */
-const baseAccount = Keypair.generate();
-const opts: ConfirmOptions = {
-  preflightCommitment: "processed",
-};
-const programID: PublicKey = new PublicKey(idl.metadata.address);
-
-
-function App() {
+const App = (): ReactElement => {
   const wallet = useWallet();
 
   const [count, setCount] = useState<Nullable<string>>(null);
+  const [baseAccount, setBaseAccount] = useState<Nullable<Keypair>>(null);
+  const [programID, setProgramID] = useState<PublicKey | string>('');
+
+  useEffect(() => {
+    /*
+     * Create an acount
+     * */
+    setBaseAccount(Keypair.generate());
+    setProgramID(new PublicKey(idl.metadata.address));
+  }, [])
 
   async function getProvider() {
     /*
      * Create the provider and return it to the caller
      * */
-    const connection = new Connection(localNetwork, opts.preflightCommitment);
+    const connection = new Connection(devNetwork, opts.preflightCommitment);
 
     const provider = new AnchorProvider(
       connection, wallet as Wallet, opts,
@@ -50,23 +51,25 @@ function App() {
     const program = new Program(idl as Idl, programID, provider);
 
     try {
-      /*
-       * Interact with the program via rpc
-       * */
-      await program.rpc.create({
-        accounts: {
-          baseAccount: baseAccount.publicKey,
-          user: provider.wallet.publicKey,
-          SystemProgram: SystemProgram.programId,
-        },
-        signers: [baseAccount],
-      });
+      if (baseAccount) {
+        /*
+         * Interact with the program via rpc
+         * */
+        await program.rpc.create({
+          accounts: {
+            baseAccount: baseAccount.publicKey,
+            user: provider.wallet.publicKey,
+            systemProgram: SystemProgram.programId,
+          },
+          signers: [baseAccount],
+        });
 
-      const account = await program.account.baseAccount.fetch(baseAccount.publicKey) as unknown as Account;
-      
-      console.log({ account });
+        const account = await program.account.baseAccount.fetch(baseAccount.publicKey) as unknown as Account;
+        
+        console.log({ account });
 
-      setCount(account.count.toString());
+        setCount(account.count.toString());
+      }
     } catch (error) {
       console.log("Transaction error while CREATING counter: ", error);
     }
@@ -77,17 +80,19 @@ function App() {
     const program = new Program(idl as Idl, programID, provider);
 
     try {
-      await program.rpc.increment({
-        accounts: {
-          baseAccount: baseAccount.publicKey,
-        },
-      });
-
-      const account = await program.account.baseAccount.fetch(baseAccount.publicKey) as unknown as Account;
-
-      console.log({ account });
-
-      setCount(account.count.toString());
+      if (baseAccount) {
+        await program.rpc.increment({
+          accounts: {
+            baseAccount: baseAccount.publicKey,
+          },
+        });
+  
+        const account = await program.account.baseAccount.fetch(baseAccount.publicKey) as unknown as Account;
+  
+        console.log({ account });
+  
+        setCount(account.count.toString());
+      }
     } catch (error) {
       console.log("Transaction error while INCREMENTING counter: ", error);
     }
@@ -98,7 +103,7 @@ function App() {
       return (
         <Fragment>
           <h2>{count}</h2>
-          <button onClick={incrementCounter}>Increment counter</button>;
+          <button onClick={incrementCounter}>Increment counter</button>
         </Fragment>
       );
     }
@@ -126,4 +131,4 @@ function App() {
   );
 }
 
-export default memo(App);
+export default App;

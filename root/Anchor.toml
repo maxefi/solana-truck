@@ -1,13 +1,13 @@
 [features]
 seeds = false
 [programs.localnet]
-root = "CKnCEbbP4HH4bTNPQX43wgQToGAiEqZDTGWePWk7ixmC"
+root = "8GHsuz6rtrF6UkTF5uoTYHuqXTjdsBx3xNRGFsnGi28m"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/Users/maxefi/.config/solana/id.json"
 
 [scripts]
