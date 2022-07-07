@@ -32,9 +32,10 @@ const App = (): ReactElement => {
       const account = await getAccount();
         
       setCount(account.count.toString());
+      // TODO: fix error type
     } catch (error) {
       console.log("Transaction error while CREATING counter: ", error);
-      setError(error as string);
+      setError(error.error.errorMessage);
     }
   }
 
@@ -49,9 +50,10 @@ const App = (): ReactElement => {
       const account = await getAccount();
     
       setCount(account.count.toString());
+      // TODO: fix error type
     } catch (error) {
       console.log("Transaction error while INCREMENTING counter: ", error);
-      setError(error as string);
+      setError(error.error.errorMessage);
     }
   }
 
@@ -66,9 +68,10 @@ const App = (): ReactElement => {
       const account = await getAccount();
   
       setCount(account.count.toString());
+      // TODO: fix error type
     } catch (error) {
       console.log("Transaction error while INCREMENTING counter: ", error);
-      setError(error as string);
+      setError(error.error.errorMessage);
     }
   }
 
@@ -102,7 +105,7 @@ const App = (): ReactElement => {
   return (
     <AppStyled>
       {renderCounter()}
-      {error && <code>{error}</code>}
+      {error && <div><code>{error}</code></div>}
     </AppStyled>
   );
 }
