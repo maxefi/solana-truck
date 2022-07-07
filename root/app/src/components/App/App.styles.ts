@@ -2,7 +2,7 @@ import styled, {
   createGlobalStyle,
   DefaultTheme,
   ThemeProps,
-} from 'styled-components';
+} from "styled-components";
 
 export const GlobalStyle = createGlobalStyle<ThemeProps<DefaultTheme>>`
   *,

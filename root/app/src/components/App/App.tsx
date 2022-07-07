@@ -1,100 +1,74 @@
-import { ReactElement, useState, Fragment, useEffect } from 'react';
-import { Connection, PublicKey } from '@solana/web3.js';
-import {
-  Program, AnchorProvider, Idl,
-} from '@project-serum/anchor';
-import { SystemProgram, Keypair } from '@solana/web3.js';
-import { Wallet } from '@project-serum/anchor/src/provider';
-import idl from '../../idl.json';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { ReactElement, useState, Fragment } from 'react';
+import { SystemProgram } from '@solana/web3.js';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+
 import { AppStyled, AppWalletButtonWrapper } from './App.styles';
-import { devNetwork } from '../../constants';
 import { Account } from './App.interface';
-import { opts } from './App.constants';
+import { useAppConfig } from './App.hooks';
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 const App = (): ReactElement => {
-  const wallet = useWallet();
+  const { wallet, baseAccount, provider, program } = useAppConfig();
 
   const [count, setCount] = useState<Nullable<string>>(null);
-  const [baseAccount, setBaseAccount] = useState<Nullable<Keypair>>(null);
-  const [programID, setProgramID] = useState<PublicKey | string>('');
+  const [error, setError] = useState<string>('');
 
-  useEffect(() => {
-    /*
-     * Create an acount
-     * */
-    setBaseAccount(Keypair.generate());
-    setProgramID(new PublicKey(idl.metadata.address));
-  }, [])
-
-  async function getProvider() {
-    /*
-     * Create the provider and return it to the caller
-     * */
-    const connection = new Connection(devNetwork, opts.preflightCommitment);
-
-    const provider = new AnchorProvider(
-      connection, wallet as Wallet, opts,
-    );
-
-    return provider;
+  async function getAccount(): Promise<Account> {
+    return await program.account.baseAccount.fetch(baseAccount.publicKey) as unknown as Account;;
   }
 
-  async function createCounter() {
-    const provider = await getProvider();
-    /*
-     * Create the program interface combining the idl, program ID amd provider
-     * */
-    const program = new Program(idl as Idl, programID, provider);
-
+  async function createCounter(): Promise<void> {
     try {
-      if (baseAccount) {
-        /*
-         * Interact with the program via rpc
-         * */
-        await program.rpc.create({
-          accounts: {
-            baseAccount: baseAccount.publicKey,
-            user: provider.wallet.publicKey,
-            systemProgram: SystemProgram.programId,
-          },
-          signers: [baseAccount],
-        });
+      await program.rpc.create({
+        accounts: {
+          baseAccount: baseAccount.publicKey,
+          user: provider.wallet.publicKey,
+          systemProgram: SystemProgram.programId,
+        },
+        signers: [baseAccount],
+      });
 
-        const account = await program.account.baseAccount.fetch(baseAccount.publicKey) as unknown as Account;
+      const account = await getAccount();
         
-        console.log({ account });
-
-        setCount(account.count.toString());
-      }
+      setCount(account.count.toString());
     } catch (error) {
       console.log("Transaction error while CREATING counter: ", error);
+      setError(error as string);
     }
   }
 
-  async function incrementCounter() {
-    const provider = await getProvider();
-    const program = new Program(idl as Idl, programID, provider);
-
+  async function incrementCounter(): Promise<void> {
     try {
-      if (baseAccount) {
-        await program.rpc.increment({
-          accounts: {
-            baseAccount: baseAccount.publicKey,
-          },
-        });
+      await program.rpc.increment({
+        accounts: {
+          baseAccount: baseAccount.publicKey,
+        },
+      });
   
-        const account = await program.account.baseAccount.fetch(baseAccount.publicKey) as unknown as Account;
-  
-        console.log({ account });
-  
-        setCount(account.count.toString());
-      }
+      const account = await getAccount();
+    
+      setCount(account.count.toString());
     } catch (error) {
       console.log("Transaction error while INCREMENTING counter: ", error);
+      setError(error as string);
+    }
+  }
+
+  async function decrementCounter(): Promise<void> {
+    try {
+      await program.rpc.decrement({
+        accounts: {
+          baseAccount: baseAccount.publicKey,
+        },
+      });
+  
+      const account = await getAccount();
+  
+      setCount(account.count.toString());
+    } catch (error) {
+      console.log("Transaction error while INCREMENTING counter: ", error);
+      setError(error as string);
     }
   }
 
@@ -104,6 +78,7 @@ const App = (): ReactElement => {
         <Fragment>
           <h2>{count}</h2>
           <button onClick={incrementCounter}>Increment counter</button>
+          <button onClick={decrementCounter}>Decrement counter</button>
         </Fragment>
       );
     }
@@ -127,6 +102,7 @@ const App = (): ReactElement => {
   return (
     <AppStyled>
       {renderCounter()}
+      {error && <code>{error}</code>}
     </AppStyled>
   );
 }

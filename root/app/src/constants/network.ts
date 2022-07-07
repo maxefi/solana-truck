@@ -1,4 +1,3 @@
-import { clusterApiUrl } from '@solana/web3.js';
+import { clusterApiUrl } from "@solana/web3.js";
 
-export const devNetwork = clusterApiUrl('devnet');
-
+export const devNetwork = clusterApiUrl("devnet");

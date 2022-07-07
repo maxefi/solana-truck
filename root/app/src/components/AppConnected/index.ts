@@ -1,3 +1,3 @@
-import AppConnected from './AppConnected';
+import AppConnected from "./AppConnected";
 
 export { AppConnected };
