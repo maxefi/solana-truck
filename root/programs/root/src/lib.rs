@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::entrypoint::ProgramResult;
 
-declare_id!("8GHsuz6rtrF6UkTF5uoTYHuqXTjdsBx3xNRGFsnGi28m");
+declare_id!("Eaq7RcDPoGuq7jUHWyYYkjGU7SPCnZ7emQHaaS6KD71p");
 
 #[program]
 pub mod root {
@@ -9,13 +9,25 @@ pub mod root {
 
     pub fn create(ctx: Context<Create>) -> ProgramResult {
         let base_account = &mut ctx.accounts.base_account;
+
         base_account.count = 0;
+
         Ok(())
     }
 
     pub fn increment(ctx: Context<Increment>) -> ProgramResult {
         let base_account = &mut ctx.accounts.base_account;
+
         base_account.count += 1;
+
+        Ok(())
+    }
+
+    pub fn decrement(ctx: Context<Increment>) -> ProgramResult {
+        let base_account = &mut ctx.accounts.base_account;
+
+        base_account.count -= 1;
+
         Ok(())
     }
 }
