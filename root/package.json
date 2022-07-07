@@ -2,6 +2,12 @@
     "scripts": {
         "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
+        "balance": "solana balance",
+        "airdrop": "solana airdrop 1",
+        "build": "anchor build",
+        "program:id": "solana address -k target/deploy/root-keypair.json",
+        "test": "anchor test",
+        "deploy": "anchor deploy",
         "copy": "node copyIdl.js"
     },
     "devDependencies": {
