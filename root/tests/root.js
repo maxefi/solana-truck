@@ -10,7 +10,7 @@ describe("root", () => {
   anchor.setProvider(provider);
   const program = anchor.workspace.Root;
 
-  it('Creates a counter', async () => {
+  it("MUST create a counter", async () => {
     /*
      * Call the create function via RPC
      * */
@@ -28,15 +28,17 @@ describe("root", () => {
     /*
      * Fetch the account and check the value of count
      * */
-    const account = await program.account.baseAccount.fetch(baseAccount.publicKey);
-    
+    const account = await program.account.baseAccount.fetch(
+      baseAccount.publicKey
+    );
+
     console.log({ count: account.count.toString() });
 
     assert.ok(account.count.toString() == 0);
     _baseAccount = baseAccount;
   });
 
-  it('Increments the counter', async () => {
+  it("MUST increments the counter", async () => {
     const baseAccount = _baseAccount;
 
     await program.rpc.increment({
@@ -45,9 +47,28 @@ describe("root", () => {
       },
     });
 
-    const account = await program.account.baseAccount.fetch(baseAccount.publicKey);
+    const account = await program.account.baseAccount.fetch(
+      baseAccount.publicKey
+    );
 
     console.log({ count: account.count.toString() });
     assert.ok(account.count.toString() == 1);
+  });
+
+  it("MUST decrement the counter", async () => {
+    const baseAccount = _baseAccount;
+
+    await program.rpc.decrement({
+      accounts: {
+        baseAccount: baseAccount.publicKey,
+      },
+    });
+
+    const account = await program.account.baseAccount.fetch(
+      baseAccount.publicKey
+    );
+
+    console.log({ count: account.count.toString() });
+    assert.ok(account.count.toString() == 0);
   });
 });
