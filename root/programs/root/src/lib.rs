@@ -2,7 +2,7 @@ use crate::counter::structs::*;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::entrypoint::ProgramResult;
 
-declare_id!("Eaq7RcDPoGuq7jUHWyYYkjGU7SPCnZ7emQHaaS6KD71p");
+declare_id!("CfzAQT7y2bS3u4bhitNHNrvhtQHZHeo7iWD3NfZwtsq5");
 
 pub mod counter;
 
