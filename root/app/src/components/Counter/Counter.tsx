@@ -5,6 +5,7 @@ import { CounterCountStyled } from './Counter.styles';
 import { Loader } from '../Loader';
 import { CounterProps } from './Counter.interface';
 import { useAppStore } from '../App/AppStore/AppStore';
+import { ErrorRpc } from '../../interfaces';
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 
@@ -36,10 +37,9 @@ const Counter = ({ getAccount, setError }: CounterProps): ReactElement => {
           setCount(account.count.toString());
         }
       }
-      // TODO: fix error type
     } catch (error) {
       console.log("Transaction error while CREATING counter: ", error);
-      setError(error.error.errorMessage);
+      setError((error as ErrorRpc).error.errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +64,7 @@ const Counter = ({ getAccount, setError }: CounterProps): ReactElement => {
       // TODO: fix error type
     } catch (error) {
       console.log("Transaction error while INCREMENTING counter: ", error);
-      setError(error.error.errorMessage);
+      setError((error as ErrorRpc).error.errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -90,7 +90,7 @@ const Counter = ({ getAccount, setError }: CounterProps): ReactElement => {
       // TODO: fix error type
     } catch (error) {
       console.log("Transaction error while INCREMENTING counter: ", error);
-      setError(error.error.errorMessage);
+      setError((error as ErrorRpc).error.errorMessage);
     } finally {
       setIsLoading(false);
     }
