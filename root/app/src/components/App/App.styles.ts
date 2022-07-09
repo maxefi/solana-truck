@@ -225,3 +225,7 @@ export const AppWalletButtonWrapper = styled.div`
   justify-content: center;
   margin-top: 100px;
 `;
+
+export const AppCounterCountStyled = styled.h2`
+  position: relative;
+`;
