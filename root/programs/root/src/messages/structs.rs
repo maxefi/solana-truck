@@ -3,8 +3,8 @@ use anchor_lang::prelude::*;
 use crate::base_account::structs::BaseAccount;
 
 #[derive(Accounts)]
-pub struct Create<'info> {
-    #[account(init, payer = user, space = 16 + 16)]
+pub struct Initialize<'info> {
+    #[account(init, payer = user, space = 64 + 64)]
     pub base_account: Account<'info, BaseAccount>,
     #[account(mut)]
     pub user: Signer<'info>,
@@ -12,13 +12,7 @@ pub struct Create<'info> {
 }
 
 #[derive(Accounts)]
-pub struct Increment<'info> {
-    #[account(mut)]
-    pub base_account: Account<'info, BaseAccount>,
-}
-
-#[derive(Accounts)]
-pub struct Decrement<'info> {
+pub struct Update<'info> {
     #[account(mut)]
     pub base_account: Account<'info, BaseAccount>,
 }
