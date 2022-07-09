@@ -223,9 +223,5 @@ export const AppStyled = styled.div`
 export const AppWalletButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 100px;
-`;
-
-export const AppCounterCountStyled = styled.h2`
-  position: relative;
+  margin-top: 50px;
 `;

@@ -1,136 +1,58 @@
-import { ReactElement, useState, Fragment } from 'react';
-import { SystemProgram } from '@solana/web3.js';
+import { ReactElement, useState, useCallback, useEffect } from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
-import { AppStyled, AppWalletButtonWrapper, AppCounterCountStyled } from './App.styles';
-import { Account } from './App.interface';
-import { useAppConfig } from './App.hooks';
+import { AppStyled, AppWalletButtonWrapper } from './App.styles';
+import { Account } from '../../interfaces';
+import { Counter } from '../Counter';
+import { AppStoreProvider } from './AppStore/AppStore';
+import { DEFAULT_APP_STORE } from './AppStore/AppStore.constants';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { Connection, Keypair, PublicKey } from '@solana/web3.js';
+import { AnchorProvider, Idl, Program, Wallet } from '@project-serum/anchor';
+
+import idl from '../../idl.json';
+import { devNetwork } from '../../constants';
+import { opts } from './App.constants';
+import { BaseAccount, ProgramIdl, Provider } from './App.interface';
 import { Loader } from '../Loader';
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 const App = (): ReactElement => {
-  const { wallet, baseAccount, provider, program } = useAppConfig();
+  const wallet = useWallet();
 
-  const [count, setCount] = useState<Nullable<string>>(null);
   const [error, setError] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // TODO: fix type
-  async function getAccount(): Nullable<Promise<Account>> {
-    if (!baseAccount) {
+  const [baseAccount, setBaseAccount] = useState<BaseAccount>(null);
+  const [provider, setProvider] = useState<Provider>(null);
+  const [program, setProgram] = useState<ProgramIdl>(null);
+
+  const isLoading = !baseAccount || !provider || !program;
+
+  useEffect(() => {
+    const connection = new Connection(devNetwork, opts.preflightCommitment);
+    const provider = new AnchorProvider(connection, wallet as unknown as Wallet, opts);
+
+    setBaseAccount(Keypair.generate());
+    setProvider(provider);
+    setProgram(new Program(
+      idl as Idl,
+      new PublicKey(idl.metadata.address),
+      provider
+    ));
+  }, [wallet]);
+
+  const getAccountHandler = useCallback(async (): Promise<Nullable<Account>> => {
+    if (!baseAccount || !program) {
       return null;
     }
 
     return await program.account.baseAccount.fetch(baseAccount.publicKey) as unknown as Account;
-  }
+  }, [baseAccount, program]);
 
-  async function createCounter(): Promise<void> {
-    try {
-      if (baseAccount) {
-        setIsLoading(true);
+  const setErrorHandler = useCallback((error: string) => setError(error), []);
 
-        await program.rpc.create({
-          accounts: {
-            baseAccount: baseAccount.publicKey,
-            user: provider.wallet.publicKey,
-            systemProgram: SystemProgram.programId,
-          },
-          signers: [baseAccount],
-        });
-  
-        const account = await getAccount();
-          
-        if (account) {
-          setCount(account.count.toString());
-        }
-      }
-      // TODO: fix error type
-    } catch (error) {
-      console.log("Transaction error while CREATING counter: ", error);
-      setError(error.error.errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function incrementCounter(): Promise<void> {
-    try {
-      if (baseAccount) {
-        setIsLoading(true);
-
-        await program.rpc.increment({
-          accounts: {
-            baseAccount: baseAccount.publicKey,
-          },
-        });
-    
-        const account = await getAccount();
-      
-        if (account) {
-          setCount(account.count.toString());
-        }      }
-      // TODO: fix error type
-    } catch (error) {
-      console.log("Transaction error while INCREMENTING counter: ", error);
-      setError(error.error.errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function decrementCounter(): Promise<void> {
-    try {
-      if (baseAccount) {
-        setIsLoading(true);
-
-        await program.rpc.decrement({
-          accounts: {
-            baseAccount: baseAccount.publicKey,
-          },
-        });
-    
-        const account = await getAccount();
-    
-        if (account) {
-          setCount(account.count.toString());
-        }
-      }
-      // TODO: fix error type
-    } catch (error) {
-      console.log("Transaction error while INCREMENTING counter: ", error);
-      setError(error.error.errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  function renderCounter(): ReactElement {
-    if (count) {
-      return (
-        <Fragment>
-          <AppCounterCountStyled>
-            {count}
-            {isLoading && <Loader />}
-          </AppCounterCountStyled>
-          <button onClick={incrementCounter}>Increment counter</button>
-          <button onClick={decrementCounter}>Decrement counter</button>
-        </Fragment>
-      );
-    }
-
-    return (
-      <Fragment>
-        <h3>
-          Please create the counter 
-          {isLoading && <Loader />}
-        </h3>
-        <button onClick={createCounter}>Create counter</button>
-      </Fragment>
-    );
-  }
-
-  if (!wallet.connected) {
+  if (!wallet?.connected) {
     return (
       <AppWalletButtonWrapper>
         <WalletMultiButton />
@@ -139,10 +61,16 @@ const App = (): ReactElement => {
   }
 
   return (
-    <AppStyled>
-      {renderCounter()}
-      {error && <div><code>{error}</code></div>}
-    </AppStyled>
+    <AppStoreProvider store={{ ...DEFAULT_APP_STORE, baseAccount, program, provider }}>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <AppStyled>
+          <Counter getAccount={getAccountHandler} setError={setErrorHandler} />
+          {error && <div><code>{error}</code></div>}
+        </AppStyled>
+      )}
+    </AppStoreProvider>
   );
 }
 
