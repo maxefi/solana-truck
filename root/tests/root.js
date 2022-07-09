@@ -38,7 +38,7 @@ describe("root", () => {
     _baseAccount = baseAccount;
   });
 
-  it("MUST increments the counter", async () => {
+  it("MUST increment the counter", async () => {
     const baseAccount = _baseAccount;
 
     await program.rpc.increment({
