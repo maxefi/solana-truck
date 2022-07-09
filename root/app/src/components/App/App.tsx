@@ -14,24 +14,33 @@ const App = (): ReactElement => {
   const [count, setCount] = useState<Nullable<string>>(null);
   const [error, setError] = useState<string>('');
 
-  async function getAccount(): Promise<Account> {
-    return await program.account.baseAccount.fetch(baseAccount.publicKey) as unknown as Account;;
+  // TODO: fix type
+  async function getAccount(): Nullable<Promise<Account>> {
+    if (baseAccount) {
+      return await program.account.baseAccount.fetch(baseAccount.publicKey) as unknown as Account;;
+    }
+
+    return null;
   }
 
   async function createCounter(): Promise<void> {
     try {
-      await program.rpc.create({
-        accounts: {
-          baseAccount: baseAccount.publicKey,
-          user: provider.wallet.publicKey,
-          systemProgram: SystemProgram.programId,
-        },
-        signers: [baseAccount],
-      });
-
-      const account = await getAccount();
-        
-      setCount(account.count.toString());
+      if (baseAccount) {
+        await program.rpc.create({
+          accounts: {
+            baseAccount: baseAccount.publicKey,
+            user: provider.wallet.publicKey,
+            systemProgram: SystemProgram.programId,
+          },
+          signers: [baseAccount],
+        });
+  
+        const account = await getAccount();
+          
+        if (account) {
+          setCount(account.count.toString());
+        }
+      }
       // TODO: fix error type
     } catch (error) {
       console.log("Transaction error while CREATING counter: ", error);
@@ -41,15 +50,19 @@ const App = (): ReactElement => {
 
   async function incrementCounter(): Promise<void> {
     try {
-      await program.rpc.increment({
-        accounts: {
-          baseAccount: baseAccount.publicKey,
-        },
-      });
-  
-      const account = await getAccount();
+      if (baseAccount) {
+        await program.rpc.increment({
+          accounts: {
+            baseAccount: baseAccount.publicKey,
+          },
+        });
     
-      setCount(account.count.toString());
+        const account = await getAccount();
+      
+        if (account) {
+          setCount(account.count.toString());
+        }
+      }
       // TODO: fix error type
     } catch (error) {
       console.log("Transaction error while INCREMENTING counter: ", error);
@@ -59,15 +72,19 @@ const App = (): ReactElement => {
 
   async function decrementCounter(): Promise<void> {
     try {
-      await program.rpc.decrement({
-        accounts: {
-          baseAccount: baseAccount.publicKey,
-        },
-      });
-  
-      const account = await getAccount();
-  
-      setCount(account.count.toString());
+      if (baseAccount) {
+        await program.rpc.decrement({
+          accounts: {
+            baseAccount: baseAccount.publicKey,
+          },
+        });
+    
+        const account = await getAccount();
+    
+        if (account) {
+          setCount(account.count.toString());
+        }
+      }
       // TODO: fix error type
     } catch (error) {
       console.log("Transaction error while INCREMENTING counter: ", error);

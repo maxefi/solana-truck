@@ -6,9 +6,11 @@ export interface Account {
   count: string;
 }
 
+export type BaseAccount = Nullable<Keypair>;
+
 export interface GetProviderAndAccount {
   wallet: WalletContextState;
-  baseAccount: Keypair;
+  baseAccount: BaseAccount;
   provider: AnchorProvider;
   program: Program<Idl>;
 }
