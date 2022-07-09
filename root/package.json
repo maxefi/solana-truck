@@ -3,7 +3,7 @@
         "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
         "balance": "solana balance",
-        "airdrop": "solana airdrop 1",
+        "airdrop": "solana airdrop 2",
         "build": "rm -r target/ && anchor build && solana address -k target/deploy/root-keypair.json",
         "test": "anchor test",
         "deploy": "anchor deploy",
