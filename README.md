@@ -6,7 +6,7 @@ balance -> airdrop
 
 # program
 
-clean -> build -> program:id -> test -> deploy -> copy
+build -> test -> deploy -> copy
 
 # app
 
