@@ -15,6 +15,12 @@ pub struct Increment<'info> {
     pub base_account: Account<'info, BaseAccount>,
 }
 
+#[derive(Accounts)]
+pub struct Decrement<'info> {
+    #[account(mut)]
+    pub base_account: Account<'info, BaseAccount>,
+}
+
 /*
  * An account that goes inside a transaction instruction
  * */

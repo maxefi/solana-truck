@@ -2,7 +2,7 @@ use crate::counter::structs::*;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::entrypoint::ProgramResult;
 
-declare_id!("HxNNbTXJg3doQmi6c23RDvnbeyiakAAp7NtP5YRCgA3P");
+declare_id!("98T4tSscmnZK9S1nheuAmiUdXPGj6pZX6RGR84ULHb88");
 
 pub mod counter;
 
@@ -26,7 +26,7 @@ pub mod root {
         Ok(())
     }
 
-    pub fn decrement(ctx: Context<Increment>) -> ProgramResult {
+    pub fn decrement(ctx: Context<Decrement>) -> ProgramResult {
         let base_account = &mut ctx.accounts.base_account;
 
         base_account.count -= 1;
