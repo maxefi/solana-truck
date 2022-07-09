@@ -4,6 +4,7 @@
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
         "balance": "solana balance",
         "airdrop": "solana airdrop 1",
+        "clean": "rm -r target/",
         "build": "anchor build",
         "program:id": "solana address -k target/deploy/root-keypair.json",
         "test": "anchor test",
