@@ -21,10 +21,7 @@ pub struct Decrement<'info> {
     pub base_account: Account<'info, BaseAccount>,
 }
 
-/*
- * An account that goes inside a transaction instruction
- * */
 #[account]
 pub struct BaseAccount {
-    pub count: u64,
+    pub count: i8,
 }
