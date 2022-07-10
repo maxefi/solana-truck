@@ -3,16 +3,16 @@ import { SystemProgram } from '@solana/web3.js';
 
 import { CounterCountStyled } from './Counter.styles';
 import { Loader } from '../Loader';
-import { CounterProps } from './Counter.interface';
+import { ComponentBaseProps } from '../../interfaces';
 import { useAppStore } from '../App/AppStore/AppStore';
 import { ErrorRpc } from '../../interfaces';
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 
-const Counter = ({ getAccount, setError }: CounterProps): ReactElement => {
+const Counter = ({ getAccount, setError }: ComponentBaseProps): ReactElement => {
   const { baseAccount, provider, program } = useAppStore();
 
-  const [count, setCount] = useState<Nullable<string>>(null);
+  const [count, setCount] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const isConfigured = baseAccount && program && provider;
@@ -96,26 +96,26 @@ const Counter = ({ getAccount, setError }: CounterProps): ReactElement => {
     }
   }
 
-  if (count) {
+  if (!count) {
     return (
       <Fragment>
-        <CounterCountStyled>
-          {count}
+        <h3>
+          Please create counter 
           {isLoading && <Loader />}
-        </CounterCountStyled>
-        <button onClick={incrementHandler}>Increment counter</button>
-        <button onClick={decrementHandler}>Decrement counter</button>
+        </h3>
+        <button onClick={createHandler}>Create counter</button>
       </Fragment>
     );
   }
 
   return (
     <Fragment>
-      <h3>
-        Please create counter 
+      <CounterCountStyled>
+        {count}
         {isLoading && <Loader />}
-      </h3>
-      <button onClick={createHandler}>Create counter</button>
+      </CounterCountStyled>
+      <button onClick={incrementHandler}>Increment counter</button>
+      <button onClick={decrementHandler}>Decrement counter</button>
     </Fragment>
   );
 }

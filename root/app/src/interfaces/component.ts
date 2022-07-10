@@ -1,6 +1,6 @@
-import { Account } from "../../interfaces";
+import { Account } from "./account";
 
-export interface CounterProps {
+export interface ComponentBaseProps {
   getAccount: () => Promise<Nullable<Account>>;
   setError: (error: string) => void;
 }
