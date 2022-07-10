@@ -15,6 +15,7 @@ import { devNetwork } from '../../constants';
 import { opts } from './App.constants';
 import { BaseAccount, ProgramIdl, Provider } from './App.interface';
 import { Loader } from '../Loader';
+import { Messages } from '../Messages';
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 
@@ -67,6 +68,7 @@ const App = (): ReactElement => {
       ) : (
         <AppStyled>
           <Counter getAccount={getAccountHandler} setError={setErrorHandler} />
+          <Messages getAccount={getAccountHandler} setError={setErrorHandler} />
           {error && <div><code>{error}</code></div>}
         </AppStyled>
       )}
