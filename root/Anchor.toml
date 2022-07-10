@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.devnet]
-root = "8WZyMazUxzW7xXDGSAJh8k28Jp2xdgZQggsAbbjg3dJF"
+root = "HY6dvUH5c6AC587ztmBBwFX21aYzP5qZxYCkY8iEm6rz"
 
 [registry]
 url = "https://anchor.projectserum.com"

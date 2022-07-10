@@ -77,7 +77,7 @@ describe("root", () => {
 
   describe("messages", () => {
     it("MUST initialize", async () => {
-      const helloWorld = "hello world. ";
+      const helloWorld = "hello world.";
 
       const baseAccount = anchor.web3.Keypair.generate();
 
@@ -103,7 +103,7 @@ describe("root", () => {
     it("MUST update a previously created account", async () => {
       const baseAccount = _baseAccount;
 
-      const howAreYouToday = "how are you today? ";
+      const howAreYouToday = "how are you today?";
 
       await program.rpc.update(howAreYouToday, {
         accounts: {

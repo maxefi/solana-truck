@@ -3,7 +3,7 @@ use crate::messages::structs::*;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::entrypoint::ProgramResult;
 
-declare_id!("8WZyMazUxzW7xXDGSAJh8k28Jp2xdgZQggsAbbjg3dJF");
+declare_id!("HY6dvUH5c6AC587ztmBBwFX21aYzP5qZxYCkY8iEm6rz");
 
 pub mod base_account;
 pub mod counter;
